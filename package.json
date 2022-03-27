@@ -1,0 +1,20 @@
+{
+    "name": "leo-captcha",
+    "version": "1.0.0",
+    "description": "Simple, Easy yet Powerful Captcha Generator for Both Frontend and Backend",
+    "main": "index.js",
+    "scripts": {},
+    "keywords": [
+        "LEO",
+        "CAPTCHA",
+        "MATH",
+        "NUMERIC",
+        "ALPHANUMERIC",
+        "ALPHA"
+    ],
+    "author": "Malay Bhavsar <malaybhavsar.290@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "canvas": "^2.9.1"
+    }
+}
