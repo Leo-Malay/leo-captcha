@@ -4,61 +4,47 @@
 const { createCanvas } = require("canvas");
 const { createHash } = require("crypto");
 class LeoCaptcha {
-    constructor(params = {}) {
-        params.enableBgColor = params?.enableBgColor || true;
-        params.enableColor = params?.enableColor || true;
-        params.enableRotate = params?.enableRotate || true;
-        params.bgColorArray = params?.bgColorArray || [
-            "#fff",
-            "#e6e6e6",
-            "#ccc",
-            "#b3b3b3",
-        ];
-        params.colorArray = params?.colorArray || [
-            "#f00",
-            "#00f",
-            "#a52a2a",
-            "#000",
-        ];
-        params.rotateArray = params?.rotateArray || [
+    constructor(p = {}) {
+        p.enBgColor = p?.enBgColor || !0;
+        p.enColor = p?.enColor || !0;
+        p.enRotate = p?.enRotate || !0;
+        p.bgColorArr = p?.bgColorArr || ["#fff", "#e6e6e6", "#ccc", "#b3b3b3"];
+        p.colorArr = p?.colorArr || ["#f00", "#00f", "#a52a2a", "#000"];
+        p.rotateArr = p?.rotateArr || [
             0, 0.01, -0.015, 0.02, -0.025, 0.03, -0.035, 0.04, -0.045, 0.05,
             -0.01, 0.015, -0.02, 0.025, -0.03, 0.035, -0.04, 0.045, -0.05,
         ];
-        params.width = params?.width || 200;
-        params.height = params?.height || 50;
-        params.captchaText = undefined;
-        params.secret = "10HelloWorld__dlroWolleH01";
-        this.params = params;
+        p.width = p?.width || 200;
+        p.height = p?.height || 50;
+        p.captchaText = undefined;
+        p.secret = "10HelloWorld__dlroWolleH01";
+        this.p = p;
     }
     Captcha = (captchaType = "AlphaNumeric", captchaLength = 7) => {
-        const canvas = createCanvas(this.params.width, this.params.height);
-        const canvasOut = canvas.getContext("2d");
+        const canvas = createCanvas(this.p.width, this.p.height);
+        const cOut = canvas.getContext("2d");
         const floorRandom = (b, a = 99) => Math.floor(Math.random() * a) % b;
         const hash = async (msg) =>
-            createHash("sha256", this.params.secret).update(msg).digest("hex");
+            createHash("sha256", this.p.secret).update(msg).digest("hex");
         const generateCaptcha = () => {
             const numericCaptcha = () => {
-                var tmp = floorRandom(58);
-                if (tmp < 48) tmp = 48 + floorRandom(10);
-                return tmp;
+                return 48 + floorRandom(10);
             };
             const alphaCaptcha = () => {
-                var tmp = floorRandom(123, 999);
-                if (tmp < 65) tmp = 65 + floorRandom(58);
+                var tmp = 65 + floorRandom(58);
                 if (90 < tmp && tmp < 97) tmp = 97 + floorRandom(26);
                 return tmp;
             };
             const alphaNumericCaptcha = () => {
-                var tmp = floorRandom(123, 999);
-                if (tmp < 48) tmp = 48 + floorRandom(75);
+                var tmp = 48 + floorRandom(75);
                 if (57 < tmp && tmp < 65) tmp = 65 + floorRandom(58);
                 if (90 < tmp && tmp < 97) tmp = 97 + floorRandom(26);
                 return tmp;
             };
-            let tmp,
-                count = captchaLength,
+            var tmp,
+                c = captchaLength,
                 res = [];
-            while (count > 0) {
+            while (c > 0) {
                 switch (captchaType) {
                     case "Numeric":
                         tmp = numericCaptcha();
@@ -74,106 +60,92 @@ class LeoCaptcha {
                         break;
                 }
                 res.push(String.fromCharCode(tmp));
-                count--;
+                c--;
             }
             return res;
         };
         const MathCaptcha = () => {
-            captchaLength = 7;
-            let a = 10 + Math.floor(Math.random() * 90),
+            captchaLength = 5;
+            var a = 10 + Math.floor(Math.random() * 90),
                 b = Math.floor(Math.random() * 10),
-                sign = selectRandom(["+", "-"]),
+                sign = sRand(["+", "-"]),
                 tmp;
             write(a, 0);
             write(sign, 2);
             write(b, 3);
             write("=", 4);
-            write("", 5);
-            switch (sign) {
-                case "+":
-                    tmp = a + b;
-                    break;
-                case "-":
-                    tmp = a - b;
-                    break;
-            }
-            this.params.captchaText = hash(String(tmp));
+            if (sign === "+") tmp = a + b;
+            else tmp = a - b;
+            this.p.captchaText = hash(String(tmp));
         };
-        const selectRandom = (array) => {
-            // Selects a random array element;
-            return array[Math.floor(Math.random() * array.length)];
+        const sRand = (arr) => {
+            return arr[Math.floor(Math.random() * arr.length)];
         };
         const setBgColor = () => {
-            // Set Background Color
-            canvasOut.fillStyle = selectRandom(this.params.bgColorArray);
-            canvasOut.fillRect(0, 0, this.params.width, this.params.height);
+            cOut.fillStyle = sRand(this.p.bgColorArr);
+            cOut.fillRect(0, 0, this.p.width, this.p.height);
         };
         const write = (val, index) => {
-            canvasOut.save();
-            canvasOut.font = this.params.height / 1.8 + "px Verdana";
-            if (this.params.enableRotate)
-                canvasOut.rotate(selectRandom(this.params.rotateArray));
-            if (this.params.enableColor)
-                canvasOut.fillStyle = selectRandom(this.params.colorArray);
-            else canvasOut.fillStyle = "#000";
-            canvasOut.fillText(
+            cOut.save();
+            cOut.font = this.p.height / 1.8 + "px Verdana";
+            if (this.p.enRotate) cOut.rotate(sRand(this.p.rotateArr));
+            if (this.p.enColor) cOut.fillStyle = sRand(this.p.colorArr);
+            else cOut.fillStyle = "#000";
+            cOut.fillText(
                 val,
-                10 + (index * this.params.width * 0.8333) / captchaLength,
-                10 + this.params.height / 2
+                10 + (index * this.p.width * 0.8333) / captchaLength,
+                10 + this.p.height / 2
             );
-            canvasOut.restore();
+            cOut.restore();
         };
         // Main Execution.
-        if (this.params.enableBgColor) setBgColor();
+        if (this.p.enBgColor) setBgColor();
         else {
-            canvasOut.fillStyle = "#fff";
-            canvasOut.fillRect(0, 0, this.params.width, this.params.height);
+            cOut.fillStyle = "#fff";
+            cOut.fillRect(0, 0, this.p.width, this.p.height);
         }
         if (captchaType == "Math") MathCaptcha();
         else {
-            let tmp = generateCaptcha();
+            var tmp = generateCaptcha();
             tmp.forEach((v, i) => write(v, i));
-            this.params.captchaText = hash(tmp.join(""));
+            this.p.captchaText = hash(tmp.join(""));
         }
-        return { hash: this.params.captchaText, captcha: canvas.toDataURL() };
+        return { hash: this.p.captchaText, captcha: canvas.toDataURL() };
     };
     Verify = (captchaUser, captchaHash, successCB, failureCB) => {
         const hash = async (msg) =>
-            createHash("sha256", this.params.secret).update(msg).digest("hex");
+            createHash("sha256", this.p.secret).update(msg).digest("hex");
         hash(captchaUser).then((data) => {
             if (data === captchaHash) successCB();
             else failureCB();
         });
     };
     setRotate = (
-        enableRotate = true,
-        rotateArray = [
+        enRotate = !0,
+        rotateArr = [
             0, 0.01, -0.015, 0.02, -0.025, 0.03, -0.035, 0.04, -0.045, 0.05,
             -0.01, 0.015, -0.02, 0.025, -0.03, 0.035, -0.04, 0.045, -0.05,
         ]
     ) => {
-        this.params.enableRotate = enableRotate;
-        this.params.rotateArray = rotateArray;
+        (this.p.enRotate = enRotate), (this.p.rotateArr = rotateArr);
     };
     setColor = (
-        enableColor = true,
-        colorArray = ["#f00", "#00f", "#a52a2a", "#000"]
+        enColor = !0,
+        colorArr = ["#f00", "#00f", "#a52a2a", "#000"]
     ) => {
-        this.params.enableColor = enableColor;
-        this.params.colorArray = colorArray;
+        (this.p.enColor = enColor), (this.p.colorArr = colorArr);
     };
     setBgColor = (
-        enableBgColor = true,
-        bgColorArray = ["#fff", "#e6e6e6", "#ccc", "#b3b3b3"]
+        enBgColor = !0,
+        bgColorArr = ["#fff", "#e6e6e6", "#ccc", "#b3b3b3"]
     ) => {
-        this.params.enableBgColor = enableBgColor;
-        this.params.bgColorArray = bgColorArray;
+        (this.p.enBgColor = enBgColor), (this.p.bgColorArr = bgColorArr);
     };
     setDimension = (width = 200, height = 50) => {
-        this.params.width = width;
-        this.params.height = height;
+        this.p.width = width;
+        this.p.height = height;
     };
-    setSecret = (key) => (this.params.secret = key || this.params.secret);
+    setSecret = (key) => (this.p.secret = key || this.p.secret);
 }
 
 module.exports = new LeoCaptcha();
