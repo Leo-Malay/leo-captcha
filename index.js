@@ -23,22 +23,22 @@ class LeoCaptcha {
     Captcha = (captchaType = "AlphaNumeric", captchaLength = 7) => {
         const canvas = createCanvas(this.p.width, this.p.height);
         const cOut = canvas.getContext("2d");
-        const floorRandom = (b, a = 99) => Math.floor(Math.random() * a) % b;
+        const fRand = (b, a = 99) => Math.floor(Math.random() * a) % b;
         const hash = async (msg) =>
             createHash("sha256", this.p.secret).update(msg).digest("hex");
         const generateCaptcha = () => {
             const numericCaptcha = () => {
-                return 48 + floorRandom(10);
+                return 48 + fRand(10);
             };
             const alphaCaptcha = () => {
-                var tmp = 65 + floorRandom(58);
-                if (90 < tmp && tmp < 97) tmp = 97 + floorRandom(26);
+                var tmp = 65 + fRand(58);
+                if (90 < tmp && tmp < 97) tmp = 97 + fRand(26);
                 return tmp;
             };
             const alphaNumericCaptcha = () => {
-                var tmp = 48 + floorRandom(75);
-                if (57 < tmp && tmp < 65) tmp = 65 + floorRandom(58);
-                if (90 < tmp && tmp < 97) tmp = 97 + floorRandom(26);
+                var tmp = 48 + fRand(75);
+                if (57 < tmp && tmp < 65) tmp = 65 + fRand(58);
+                if (90 < tmp && tmp < 97) tmp = 97 + fRand(26);
                 return tmp;
             };
             var tmp,
@@ -51,9 +51,6 @@ class LeoCaptcha {
                         break;
                     case "Alpha":
                         tmp = alphaCaptcha();
-                        break;
-                    case "AlphaNumeric":
-                        tmp = alphaNumericCaptcha();
                         break;
                     default:
                         tmp = alphaNumericCaptcha();
