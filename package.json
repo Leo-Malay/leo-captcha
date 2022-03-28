@@ -1,6 +1,6 @@
 {
     "name": "leo-captcha",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Simple, Easy yet Powerful Captcha Generator for Both Frontend and Backend",
     "main": "index.js",
     "scripts": {},
