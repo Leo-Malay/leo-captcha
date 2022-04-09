@@ -16,6 +16,9 @@ class LeoCaptcha {
         ];
         p.width = p?.width || 200;
         p.height = p?.height || 50;
+        p.font = this.p.height / 1.8 + "px Verdana";
+        p.writeHeight = this.p.height / 2;
+        p.writeWidth = this.p.width * 0.8333;
         p.captchaText = undefined;
         p.secret = "10HelloWorld__dlroWolleH01";
         this.p = p;
@@ -37,8 +40,8 @@ class LeoCaptcha {
             };
             const alphaNumericCaptcha = () => {
                 var tmp = 48 + fRand(75);
-                if (57 < tmp && tmp < 65) tmp = 65 + fRand(58);
-                if (90 < tmp && tmp < 97) tmp = 97 + fRand(26);
+                if (57 < tmp && tmp < 65) tmp = 65 + fRand(25);
+                else if (90 < tmp && tmp < 97) tmp = 97 + fRand(26);
                 return tmp;
             };
             var tmp,
@@ -84,14 +87,14 @@ class LeoCaptcha {
         };
         const write = (val, index) => {
             cOut.save();
-            cOut.font = this.p.height / 1.8 + "px Verdana";
+            cOut.font = this.p.font;
             if (this.p.enRotate) cOut.rotate(sRand(this.p.rotateArr));
             if (this.p.enColor) cOut.fillStyle = sRand(this.p.colorArr);
             else cOut.fillStyle = "#000";
             cOut.fillText(
                 val,
-                10 + (index * this.p.width * 0.8333) / captchaLength,
-                10 + this.p.height / 2
+                10 + (index * this.p.writeWidth) / captchaLength,
+                10 + this.p.writeHeight
             );
             cOut.restore();
         };
@@ -110,6 +113,8 @@ class LeoCaptcha {
         return { hash: this.p.captchaText, captcha: canvas.toDataURL() };
     };
     Verify = (captchaUser, captchaHash, successCB, failureCB) => {
+        if (captchaHash === undefined || captchaHash === null)
+            throw "CaptchaHash cannot be undefined or null";
         const hash = async (msg) =>
             createHash("sha256", this.p.secret).update(msg).digest("hex");
         hash(captchaUser).then((data) => {
@@ -124,25 +129,43 @@ class LeoCaptcha {
             -0.01, 0.015, -0.02, 0.025, -0.03, 0.035, -0.04, 0.045, -0.05,
         ]
     ) => {
+        if (typeof enRotate !== "boolean")
+            throw "enableRotate should be a boolean";
+        if (!Array.isArray(rotateArr)) throw "rotateArray should be an array";
         (this.p.enRotate = enRotate), (this.p.rotateArr = rotateArr);
     };
     setColor = (
         enColor = !0,
         colorArr = ["#f00", "#00f", "#a52a2a", "#000"]
     ) => {
+        if (typeof enColor !== "boolean")
+            throw "enableColor should be a boolean";
+        if (!Array.isArray(colorArr)) throw "colorArray should be an array";
         (this.p.enColor = enColor), (this.p.colorArr = colorArr);
     };
     setBgColor = (
         enBgColor = !0,
         bgColorArr = ["#fff", "#e6e6e6", "#ccc", "#b3b3b3"]
     ) => {
+        if (typeof enBgColor !== "boolean")
+            throw "enableBackgroundColor should be a boolean";
+        if (!Array.isArray(bgColorArr))
+            throw "BackgroundColorArray should be an array";
         (this.p.enBgColor = enBgColor), (this.p.bgColorArr = bgColorArr);
     };
     setDimension = (width = 200, height = 50) => {
+        if (isNaN(width) || isNaN(height))
+            throw "Height and Width should be numbers";
         this.p.width = width;
         this.p.height = height;
+        this.p.font = this.p.height / 1.8 + "px Verdana";
+        this.p.writeHeight = this.p.height / 2;
+        this.p.writeWidth = this.p.width * 0.8333;
     };
-    setSecret = (key) => (this.p.secret = key || this.p.secret);
+    setSecret = (key) => {
+        if (!isNaN(key) || Array.isArray()) throw "Key should be an String";
+        this.p.secret = key || this.p.secret;
+    };
 }
 
 module.exports = new LeoCaptcha();

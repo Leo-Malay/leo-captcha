@@ -6,7 +6,7 @@ Hello World I developed this module with the flexibility and simplicity that dev
 
 ```jsx
 // Import the module
-const captcha = require("./captcha");
+const captcha = require("leo-captcha");
 ```
 
 <br/>
